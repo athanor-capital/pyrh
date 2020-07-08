@@ -102,6 +102,25 @@ def instruments(
     elif id_ is not None:
         return INSTRUMENTS_BASE / f"{id_}/"
 
+def build_instruments(
+        instrument_id: Optional[str] = None, option: Optional[str] = None
+):
+    """tmp replacement to allow get_popularity to work
+
+
+    Args:
+         instrument_id: The id of the quried instrument.
+         option: The desired option.
+    """
+    url = INSTRUMENTS_BASE
+    if instrument_id:
+        url /= f"{instrument_id}/"
+    if option:
+        url /= f"{option}/"
+
+    return url
+
+
 
 def build_orders(order_id: str = None) -> URL:
     """Build endpoint to place orders."
