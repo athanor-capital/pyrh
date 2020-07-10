@@ -102,6 +102,17 @@ def instruments(
     elif id_ is not None:
         return INSTRUMENTS_BASE / f"{id_}/"
 
+def build_popularity_batch(instrument_ids = []):
+    """utilize new endpoint fund in robintrack
+    https://api.robinhood.com/instruments/popularity
+    Args:
+        instrument_ids: list of ids to be quried
+    """
+    instrument_ids_string = ','.join(instrument_ids)
+    url = INSTRUMENTS_BASE / "popularity/"
+    url = url.with_query(ids=instrument_ids_string)
+    return url
+
 def build_instruments(
         instrument_id: Optional[str] = None, option: Optional[str] = None
 ):

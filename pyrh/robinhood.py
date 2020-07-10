@@ -440,6 +440,30 @@ class Robinhood(InstrumentManager, SessionManager):
 
         return self.get(url)
 
+    def parse_instruments_url(instrument_url):
+        return instrument_url.split("instruments/")[1][:-1]
+
+    def get_instrument_ids(self, stocks = []):
+        result = {}
+        for ticker in stocks:
+            # print(ticker)
+            holder = self.get_url(urls.instruments(symbol = ticker))
+            result[ticker] = holder["results"][0]['id'] if len(holder['results']) > 0 else None
+        return result
+
+    def get_popularity_batch(self, stocks = []):
+        instrument_id_map = self.get_instrument_ids(stocks=stocks)
+        reverse_instrument_id_map = {v:k for k, v in instrument_id_map.items() if v}
+        url = urls.build_popularity_batch(instrument_ids=list(reverse_instrument_id_map.keys()))
+        tmp_result = self.get_url(url)
+        popularity_result = []
+        for res in tmp_result["results"]:
+            id_holder = res['instrument'].split("instruments/")[1][:-1]
+            users_holding = res["num_open_positions"]
+            ticker = reverse_instrument_id_map.get(id_holder)
+            popularity_result.append({"ticker": ticker, "instrument_id": id_holder, "users_holding": users_holding})
+        return popularity_result
+
     def get_popularity(self, stock=""):
         """Get the number of robinhood users who own the given stock
 
